@@ -9,8 +9,20 @@ export class RoadSequence {
   public roadSequenceCrystals: number[] = [];
 
   constructor(roads: Road[], name: string) {
-    this.roads = roads;
+    this.roads = [];
+    this.addRoadsRecalc(roads);
     this.name = name;
+  }
+
+  public addRoadsRecalc(roads: Road[]) {
+    this.roadSequenceCeramicContainers = [];
+    this.roadSequenceMetalContainers = [];
+    this.roadSequenceCrystals = [];
+    this.roads = [];
+
+    roads.forEach((road) => {
+      this.addRoad(road);
+    });
   }
 
   public addRoad(road: Road) {
@@ -50,35 +62,33 @@ export class RoadSequence {
     this.roadSequenceCeramicContainers = ceramicContainers;
   }
 
-  private calculateRoadSequence(road: Road) {
-    const metalContainers = this.roadSequenceMetalContainers;
-    const ceramicContainers = this.roadSequenceCeramicContainers;
-    const crystals = this.roadSequenceCrystals;
-    let currentMetals: Containers = [];
-    let currentCeramic: Containers = [];
+  // private calculateRoadSequence(road: Road) {
+  //   const metalContainers = this.roadSequenceMetalContainers;
+  //   const ceramicContainers = this.roadSequenceCeramicContainers;
+  //   const crystals = this.roadSequenceCrystals;
+  //   let currentMetals: Containers = [];
+  //   let currentCeramic: Containers = [];
 
-    if (metalContainers.length === 0) {
-      currentMetals = this.combineShipment(
-        metalContainers[metalContainers.length - 1],
-        road.metalContainers
-      );
-    }
+  //   if (metalContainers.length === 0) {
+  //     currentMetals = this.combineShipment(
+  //       metalContainers[metalContainers.length - 1],
+  //       road.metalContainers
+  //     );
+  //   }
 
-    if (ceramicContainers.length != 0) {
-      currentCeramics = this.combineShipment(
-        ceramicContainers[ceramicContainers.length - 1],
-        road.metalContainers
-      );
-    }
+  //   if (ceramicContainers.length != 0) {
+  //     currentCeramics = this.combineShipment(
+  //       ceramicContainers[ceramicContainers.length - 1],
+  //       road.metalContainers
+  //     );
+  //   }
 
-    if (crystals.length != 0) {
-      const currentCrystals =
-        crystals[crystals.length - 1] + road.requiredCrystals;
-    }
-    return { currentMetals, currentCeramics, crystals };
-  }
-
-  public recalculateRoadSequence() {}
+  //   if (crystals.length != 0) {
+  //     const currentCrystals =
+  //       crystals[crystals.length - 1] + road.requiredCrystals;
+  //   }
+  //   return { currentMetals, currentCeramics, crystals };
+  // }
 
   private combineShipment(ship1: Containers, ship2: Containers): Containers {
     const newContainers: Containers = {

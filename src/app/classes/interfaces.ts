@@ -1,6 +1,16 @@
 import { Road } from "./road";
 import { RoadSequence } from "./roadSequence";
 
+export const emptyContainers: Containers = {
+  small: 0,
+  medium: 0,
+  large: 0,
+  extraLarge: 0,
+  extraLarge1: 0,
+  extraLarge2: 0,
+  extraLarge3: 0,
+};
+
 export function convertToCargo(road: Road) {
   const metalContainers: Containers = {
     small: 0,

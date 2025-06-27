@@ -16,6 +16,7 @@ import { RoadSequence } from "./classes/roadSequence";
 import RoadSequenceAdding from "./roadSequenceAdding";
 import RoadViewer from "./roadViewer";
 import RoadSequenceViewer from "./roadSequenceViewer";
+import RoadSequenceEditor from "./roadSequenceEditor";
 
 export default function Home() {
   const [road, setRoad] = useState<Road>();
@@ -30,20 +31,40 @@ export default function Home() {
 
   const [createRoad, setCreateRoad] = useState<boolean>();
 
+  const [editingRoadSequence, setEditingRoadSequence] = useState<boolean>();
+
+  const [roadSequenceToEdit, setRoadSequenceToEdit] = useState<RoadSequence>();
+
   const toggleCreateRoad = () => {
     setCreateRoad(!createRoad);
+  };
+
+  const saveRoad = (road: Road) => {
+    setRoad(road);
   };
 
   const toggleAddingRoad = () => {
     setAdding(!adding);
   };
 
+  const toggleEditRoadSequence = () => {
+    setEditingRoadSequence(!editingRoadSequence);
+  };
+
   const saveRoadSequences = (roadSequence: RoadSequence) => {
     if (roadSequence !== undefined) {
       if (roadSequences !== undefined) {
-        setRoadSequences(roadSequences.concat(roadSequence));
-        setRoad(undefined);
-        return undefined;
+        const index = roadSequences.findIndex(
+          (rs) => rs.name === roadSequence.name
+        );
+        if (index === -1) {
+          setRoadSequences(roadSequences.concat(roadSequence));
+          setRoad(undefined);
+          return undefined;
+        } else {
+          roadSequences[index] = roadSequence;
+          setRoadSequences(roadSequences);
+        }
       }
       setRoadSequences([roadSequence]);
       return undefined;
@@ -63,6 +84,12 @@ export default function Home() {
     setRoadToAdd(road);
     setAdding(true);
   };
+
+  const editRoadSequence = (roadSequence: RoadSequence) => {
+    setRoadSequenceToEdit(roadSequence);
+    setEditingRoadSequence(true);
+  };
+
   useEffect(() => {
     if (road !== undefined) {
       if (roads !== undefined) {
@@ -76,58 +103,71 @@ export default function Home() {
   }, [road]);
   return (
     <>
-      {!adding ? (
-        !createRoad ? (
-          <div>
-            <Button onClick={() => toggleCreateRoad()}>Create new road</Button>
-            <ListGroup>
-              {roads ? (
-                roads?.map((road) => (
-                  <div key={road.name}>
-                    <RoadViewer road={road}></RoadViewer>
-                    <Row>
-                      <Col sm={{ span: 5, offset: 1 }}>
-                        <Button onClick={() => addToRoadSequence(road)}>
-                          Add to route
+      {!editingRoadSequence ? (
+        !adding ? (
+          !createRoad ? (
+            <div>
+              <Button onClick={() => toggleCreateRoad()}>
+                Create new road
+              </Button>
+              <ListGroup>
+                {roads ? (
+                  roads?.map((road) => (
+                    <div key={road.name}>
+                      <RoadViewer road={road}></RoadViewer>
+                      <Row>
+                        <Col sm={{ span: 5, offset: 1 }}>
+                          <Button onClick={() => addToRoadSequence(road)}>
+                            Add to route
+                          </Button>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </ListGroup>
+              <ListGroup>
+                {roadSequences ? (
+                  roadSequences?.map((roadSequence) => (
+                    <div key={roadSequence.name}>
+                      <RoadSequenceViewer
+                        roadSequence={roadSequence}
+                      ></RoadSequenceViewer>
+                      <Col sm={{ offset: 1 }}>
+                        <Button onClick={() => editRoadSequence(roadSequence)}>
+                          Edit route
                         </Button>
                       </Col>
-                    </Row>
-                  </div>
-                ))
-              ) : (
-                <></>
-              )}
-            </ListGroup>
-            <ListGroup>
-              {roadSequences ? (
-                roadSequences?.map((roadSequence) => (
-                  <div key={roadSequence.name}>
-                    <RoadSequenceViewer
-                      roadSequence={roadSequence}
-                    ></RoadSequenceViewer>
-                  </div>
-                ))
-              ) : (
-                <></>
-              )}
-            </ListGroup>
-          </div>
-        ) : (
-          <Container>
+                    </div>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </ListGroup>
+            </div>
+          ) : (
             <RoadCreator
               toggleCreateRoad={toggleCreateRoad}
-              setRoad={setRoad}
+              setRoad={saveRoad}
             ></RoadCreator>
-          </Container>
+          )
+        ) : (
+          <RoadSequenceAdding
+            road={roadToAdd}
+            toggleAddingRoad={toggleAddingRoad}
+            roadSequences={roadSequences}
+            setRoadSequence={saveRoadSequences}
+            clearRoad={clearRoad}
+          ></RoadSequenceAdding>
         )
       ) : (
-        <RoadSequenceAdding
-          road={roadToAdd}
-          toggleAddingRoad={toggleAddingRoad}
-          roadSequences={roadSequences}
+        <RoadSequenceEditor
+          roadSequence={roadSequenceToEdit}
+          toggleEditRoadSequence={toggleEditRoadSequence}
           setRoadSequence={saveRoadSequences}
-          clearRoad={clearRoad}
-        ></RoadSequenceAdding>
+        ></RoadSequenceEditor>
       )}
     </>
   );

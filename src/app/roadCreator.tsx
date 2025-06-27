@@ -7,16 +7,18 @@ import {
   Row,
 } from "react-bootstrap";
 import { Road } from "./classes/road";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 
 type RoadCreatorProps = {
+  road?: Road;
   toggleCreateRoad: () => void;
-  setRoad: (value: SetStateAction<Road | undefined>) => void;
+  setRoad: (road: Road) => void;
 };
 export default function RoadCreator({
   toggleCreateRoad,
   setRoad,
+  road,
 }: RoadCreatorProps) {
   const [totalCrystals, setTotalCrystals] = useState<number>();
   const [totalMetals, setTotalMetals] = useState<number>();
@@ -46,72 +48,96 @@ export default function RoadCreator({
     toggleCreateRoad();
   };
 
+  useEffect(() => {
+    setTotalCrystals(road?.totalCrystals);
+    setCurrentCrystals(road?.currentCrystals);
+    setTotalMetals(road?.totalMetals);
+    setCurrentMetals(road?.currentMetals);
+    setTotalCeramics(road?.totalCeramics);
+    setCurrentCeramics(road?.currentCeramics);
+    setName(road?.name);
+  }, [road]);
+
   return (
     <>
       <Row>
-        <Col sm={1}>
+        <Col sm={3}>
           <InputGroup>
             <InputGroupText>Name</InputGroupText>
             <Form.Control
               type="text"
               placeholder={"Name"}
+              defaultValue={name}
               onChange={(e) => setName(e.target.value)}
             />
           </InputGroup>
         </Col>
-        <Col sm={3}>
-          <InputGroup>
-            <InputGroupText>Current Crystals</InputGroupText>
-            <Form.Control
-              type="number"
-              defaultValue={0}
-              onChange={(e) => setCurrentCrystals(Number(e.target.value))}
-            />
-            <InputGroupText>Total Crystals</InputGroupText>
-            <Form.Control
-              type="number"
-              defaultValue={0}
-              onChange={(e) => setTotalCrystals(Number(e.target.value))}
-            />
-          </InputGroup>
-        </Col>
-        <Col sm={3}>
-          <InputGroup>
-            <InputGroupText>Current Ceramics</InputGroupText>
-            <Form.Control
-              type="number"
-              defaultValue={0}
-              onChange={(e) => setCurrentCeramics(Number(e.target.value))}
-            />
-            <InputGroupText>Total Ceramics</InputGroupText>
-            <Form.Control
-              type="number"
-              defaultValue={0}
-              onChange={(e) => setTotalCeramics(Number(e.target.value))}
-            />
-          </InputGroup>
-        </Col>
-        <Col sm={3}>
-          <InputGroup>
-            <InputGroupText>Current Metals</InputGroupText>
-            <Form.Control
-              type="number"
-              defaultValue={0}
-              onChange={(e) => setCurrentMetals(Number(e.target.value))}
-            />
-            <InputGroupText>Total Metals</InputGroupText>
-            <Form.Control
-              type="number"
-              defaultValue={0}
-              onChange={(e) => setTotalMetals(Number(e.target.value))}
-            />
-          </InputGroup>
-        </Col>
-        <Col sm={3}>
-          <Button type="submit" onClick={createRoad}>
-            Finish Road
-          </Button>
-        </Col>
+        <Row>
+          <Col sm={6}>
+            <InputGroup>
+              <InputGroupText>Current Crystals</InputGroupText>
+              <Form.Control
+                type="number"
+                defaultValue={currentCrystals}
+                onChange={(e) => setCurrentCrystals(Number(e.target.value))}
+              />
+              <InputGroupText>Total Crystals</InputGroupText>
+              <Form.Control
+                type="number"
+                defaultValue={totalCrystals}
+                onChange={(e) => setTotalCrystals(Number(e.target.value))}
+              />
+            </InputGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={6}>
+            <InputGroup>
+              <InputGroupText>Current Ceramics</InputGroupText>
+              <Form.Control
+                type="number"
+                defaultValue={currentCeramics}
+                onChange={(e) => setCurrentCeramics(Number(e.target.value))}
+              />
+              <InputGroupText>Total Ceramics</InputGroupText>
+              <Form.Control
+                type="number"
+                defaultValue={totalCeramics}
+                onChange={(e) => setTotalCeramics(Number(e.target.value))}
+              />
+            </InputGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={6}>
+            <InputGroup>
+              <InputGroupText>Current Metals</InputGroupText>
+              <Form.Control
+                type="number"
+                defaultValue={currentMetals}
+                onChange={(e) => setCurrentMetals(Number(e.target.value))}
+              />
+              <InputGroupText>Total Metals</InputGroupText>
+              <Form.Control
+                type="number"
+                defaultValue={totalMetals}
+                onChange={(e) => setTotalMetals(Number(e.target.value))}
+              />
+            </InputGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={3}>
+            <Button type="submit" onClick={createRoad}>
+              Finish Road
+            </Button>
+          </Col>
+          <Col sm={3}>
+            <Button type="submit" onClick={toggleCreateRoad}>
+              Return
+            </Button>
+          </Col>
+        </Row>
       </Row>
     </>
   );

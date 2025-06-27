@@ -76,6 +76,11 @@ export default function RoadSequenceAdding({
               </Button>
             )}
           </Col>
+          <Col sm={{ offset: 1 }}>
+            <Button onClick={() => toggleAddingRoad()}>
+              Leave without adding
+            </Button>
+          </Col>
         </>
       ) : (
         <></>
